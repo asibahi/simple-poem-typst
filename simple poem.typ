@@ -26,37 +26,40 @@
                       .split("\n")
                       .map(line => line.trim(" "))
                       .filter(body => body.len() != 0)
-  // 👇 it is silly that i need this to get measure to work properly.
+  //👇 i need this to get measure to work properly.
   style(styles => {
     linebreak()
-    let max_size = lines.map(body => measure(body,styles).width).sorted().last()   
-    for index, line in lines {
-      // 👇 250pt until there is a way to get the context's true width
-      if 250pt > max_size * 2 + 20pt { 
-        if calc.mod(index, 2) == 0 [
-          #box(width: max_size , line + jb) 
-        ] else [
-          #box(width:20pt, ) #box(width: max_size , line + jb) \ 
-        ]
-      } else {
-        block(width: max_size + 50pt,
-          if calc.mod(lines.len(), 2) == 1 and index == lines.len() - 1 [
-            #box(width: max_size , line + jb) 
-          ] else if calc.mod(index, 2) == 0 [
-            #set align(start)
-            #box(width: max_size , line + jb) 
-          ] else [
-            #set align(end)
-            #box(width: max_size , line + jb) \
-          ]
-        )    
-      }
-    } // for loop
+    let max_size = lines.map(body => measure(body,styles).width).sorted().last()
+    //👇 and this to get the container size.
+    layout(size => {  
+        if size.width > max_size * 2 + 20pt { 
+          for (index, line) in lines.enumerate() {        
+            if calc.mod(index, 2) == 0 [
+              #box(width: max_size , line + jb) 
+            ] else [
+              #box(width:20pt, ) #box(width: max_size , line + jb) \ 
+            ]
+          }          
+        } else {        
+          block(width: max_size + 50pt,
+            for (index, line) in lines.enumerate() {   
+              if calc.mod(lines.len(), 2) == 1 and index == lines.len() - 1 [
+                #box(width: max_size , line + jb) 
+              ] else if calc.mod(index, 2) == 0 [
+                #set align(start)
+                #box(width: max_size , line + jb) 
+              ] else [
+                #set align(end)
+                #box(width: max_size , line + jb) \
+              ] 
+            }
+          )
+        }
+    }) //layout()
   }) // style()
 } // let
 
 #set_poetry(ahmed_shawqi)
-
 
 = نديم الباذنجان
 
@@ -98,4 +101,3 @@ So long as men can breathe, or eyes can see,
 So long lives this, and this gives life to thee.
 
 ")
-
