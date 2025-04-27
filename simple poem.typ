@@ -19,6 +19,7 @@
 
 "
 
+
 #let set_poetry(my_lines) = {
   set align(center)
   let jb = linebreak(justify: true)
@@ -26,13 +27,13 @@
                       .split("\n")
                       .map(line => line.trim(" "))
                       .filter(body => body.len() != 0)
-  //👇 i need this to get measure to work properly.
-  style(styles => {
-    linebreak()
-    let max_size = lines.map(body => measure(body,styles).width).sorted().last()
-    //👇 and this to get the container size.
-    layout(size => {  
-        if size.width > max_size * 2 + 20pt { 
+  context [
+    #block(above: 1em, {
+      let max_size = lines
+        .map(body => measure(body).width)
+        .sorted().last()
+      layout(page_size => {
+              if page_size.width > max_size * 2 + 20pt { 
           for (index, line) in lines.enumerate() {        
             if calc.rem(index, 2) == 0 [
               #box(width: max_size , line + jb) 
@@ -53,11 +54,13 @@
                 #box(width: max_size , line + jb) \
               ] 
             }
-          )
-        }
-    }) //layout()
-  }) // style()
+          ) // block
+        } // else
+      }) // layout
+    }) // block
+  ] // context
 } // let
+
 
 #set_poetry(ahmed_shawqi)
 
